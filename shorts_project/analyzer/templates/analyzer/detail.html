@@ -1,0 +1,232 @@
+{% extends 'analyzer/base.html' %}
+
+{% block content %}
+<a href="{% url 'index' %}" class="back-link">← Назад к списку</a>
+
+<div class="video-detail">
+    <h2 style="color: #333; margin-bottom: 20px;">{{ video.title }}</h2>
+    
+    <div class="detail-container">
+        <div class="detail-sidebar">
+            <div class="thumbnail-section">
+                <h3 style="color: #667eea; margin-bottom: 10px;">Информация</h3>
+                <p><strong>Канал:</strong> {{ video.channel_title }}</p>
+                <p><strong>Опубликовано:</strong> {{ video.published_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>ID:</strong> <code>{{ video.video_id }}</code></p>
+                <a href="{{ video.url }}" target="_blank" class="watch-btn">
+                    Смотреть на YouTube →
+                </a>
+            </div>
+            
+            <div class="stats-section">
+                <h3 style="color: #667eea; margin-bottom: 10px;">Статистика</h3>
+                <div class="stat-item">
+                    <span class="stat-icon">👁️</span>
+                    <span class="stat-text">{{ video.view_count|default:0 }} просмотров</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👍</span>
+                    <span class="stat-text">{{ video.like_count|default:0 }} лайков</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">💬</span>
+                    <span class="stat-text">{{ video.comment_count|default:0 }} комментариев</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-main">
+            <div class="section">
+                <h3 style="color: #667eea; margin-bottom: 15px;">#️⃣ Хештеги</h3>
+                {% if video.hashtags %}
+                <div class="tags-list">
+                    {% for hashtag in video.hashtags %}
+                    <div class="tag-item hashtag-item">
+                        <span class="tag-number">{{ forloop.counter }}</span>
+                        <span class="tag-text">#{{ hashtag }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state">Хештеги не найдены</p>
+                {% endif %}
+            </div>
+            
+            <div class="section">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🏷️ Теги</h3>
+                {% if video.tags %}
+                <div class="tags-list">
+                    {% for tag in video.tags %}
+                    <div class="tag-item tag-item-regular">
+                        <span class="tag-number">{{ forloop.counter }}</span>
+                        <span class="tag-text">{{ tag }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state">Теги не найдены</p>
+                {% endif %}
+            </div>
+            
+            {% if video.description %}
+            <div class="section">
+                <h3 style="color: #667eea; margin-bottom: 15px;">📝 Описание</h3>
+                <div class="description-content">
+                    {{ video.description|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        margin-top: 20px;
+    }
+    
+    .detail-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .thumbnail-section,
+    .stats-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    .thumbnail-section p {
+        margin-bottom: 10px;
+        color: #666;
+    }
+    
+    .thumbnail-section code {
+        background: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    
+    .watch-btn {
+        display: block;
+        margin-top: 15px;
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+    
+    .watch-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .stat-icon {
+        font-size: 1.5em;
+    }
+    
+    .stat-text {
+        color: #333;
+    }
+    
+    .section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .tags-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .tag-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 15px;
+        background: white;
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+    
+    .tag-item:hover {
+        transform: translateX(5px);
+    }
+    
+    .hashtag-item {
+        border-left: 4px solid #667eea;
+    }
+    
+    .tag-item-regular {
+        border-left: 4px solid #0066cc;
+    }
+    
+    .tag-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background: #e0e0e0;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 0.85em;
+        color: #666;
+    }
+    
+    .tag-text {
+        flex: 1;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .description-content {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        max-height: 400px;
+        overflow-y: auto;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    .empty-state {
+        color: #999;
+        font-style: italic;
+        padding: 20px;
+        text-align: center;
+        background: white;
+        border-radius: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .detail-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

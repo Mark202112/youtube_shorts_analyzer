@@ -1,0 +1,213 @@
+{% extends 'analyzer/base.html' %}
+
+{% block content %}
+<a href="{% url 'index' %}" class="back-link">← Вернуться к форме</a>
+
+<div class="video-result">
+    <h2 style="color: #333; margin-bottom: 20px;">📹 Результаты анализа</h2>
+    
+    <div class="video-info">
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">Основная информация</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Название:</strong>
+                    <p>{{ video.title }}</p>
+                </div>
+                <div class="info-item">
+                    <strong>Канал:</strong>
+                    <p>{{ video.channel_title }}</p>
+                </div>
+                <div class="info-item">
+                    <strong>Дата публикации:</strong>
+                    <p>{{ video.published_at|date:"d.m.Y H:i" }}</p>
+                </div>
+                <div class="info-item">
+                    <strong>Video ID:</strong>
+                    <p><code style="background: #f5f5f5; padding: 4px 8px; border-radius: 4px;">{{ video.video_id }}</code></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">📊 Статистика</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-value">{{ video.view_count|default:0 }}</div>
+                    <div class="stat-label">Просмотры</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👍</div>
+                    <div class="stat-value">{{ video.like_count|default:0 }}</div>
+                    <div class="stat-label">Лайки</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <div class="stat-value">{{ video.comment_count|default:0 }}</div>
+                    <div class="stat-label">Комментарии</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">#️⃣ Хештеги ({{ video.hashtags|length }})</h3>
+            {% if video.hashtags %}
+            <div class="tags-container">
+                {% for hashtag in video.hashtags %}
+                <span class="tag hashtag">#{{ hashtag }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #999;">Хештеги не найдены</p>
+            {% endif %}
+        </div>
+        
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">🏷️ Теги ({{ video.tags|length }})</h3>
+            {% if video.tags %}
+            <div class="tags-container">
+                {% for tag in video.tags %}
+                <span class="tag video-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #999;">Теги не найдены</p>
+            {% endif %}
+        </div>
+        
+        {% if video.description %}
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">📝 Описание</h3>
+            <div class="description-box">
+                {{ video.description|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="info-section">
+            <h3 style="color: #667eea; margin-bottom: 15px;">🔗 Ссылка на видео</h3>
+            <a href="{{ video.url }}" target="_blank" class="video-link">
+                Открыть на YouTube →
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    
+    .info-item {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+    }
+    
+    .info-item strong {
+        color: #667eea;
+        display: block;
+        margin-bottom: 8px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .stat-value {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9em;
+    }
+    
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .tag {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 500;
+        transition: transform 0.2s;
+    }
+    
+    .tag:hover {
+        transform: scale(1.05);
+    }
+    
+    .hashtag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .video-tag {
+        background: #e7f3ff;
+        color: #0066cc;
+        border: 2px solid #b3d9ff;
+    }
+    
+    .description-box {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    .video-link {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .video-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+</style>
+{% endblock %}

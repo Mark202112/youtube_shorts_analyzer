@@ -1,0 +1,85 @@
+{% extends 'analyzer/base.html' %}
+
+{% block content %}
+<div class="analyzer-form">
+    <h2 style="color: #333; margin-bottom: 20px;">🔍 Анализ видео</h2>
+    
+    <form method="post" action="{% url 'analyze_video' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="video_url">URL YouTube Shorts или видео:</label>
+            <input 
+                type="url" 
+                id="video_url" 
+                name="video_url" 
+                placeholder="https://youtube.com/shorts/VIDEO_ID или https://youtu.be/VIDEO_ID"
+                required
+            >
+            <small style="color: #666; display: block; margin-top: 8px;">
+                Поддерживаемые форматы: youtube.com/shorts/..., youtu.be/..., youtube.com/watch?v=...
+            </small>
+        </div>
+        
+        <button type="submit">📊 Анализировать</button>
+    </form>
+</div>
+
+{% if recent_analyses %}
+<div class="recent-analyses" style="margin-top: 40px;">
+    <h2 style="color: #333; margin-bottom: 20px;">📚 Последние анализы</h2>
+    
+    <div class="analyses-grid">
+        {% for video in recent_analyses %}
+        <div class="analysis-card">
+            <h3 style="color: #667eea; margin-bottom: 10px; font-size: 1.1em;">
+                <a href="{% url 'video_detail' video.video_id %}" style="text-decoration: none; color: inherit;">
+                    {{ video.title|truncatewords:10 }}
+                </a>
+            </h3>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">
+                📺 {{ video.channel_title }}
+            </p>
+            <div style="display: flex; gap: 15px; margin-bottom: 10px; font-size: 0.9em; color: #888;">
+                <span>👁️ {{ video.view_count|default:0 }}</span>
+                <span>👍 {{ video.like_count|default:0 }}</span>
+                <span>💬 {{ video.comment_count|default:0 }}</span>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                {% if video.hashtags %}
+                    <span style="background: #e7f3ff; color: #0066cc; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                        #️⃣ {{ video.hashtags|length }} хештег{{ video.hashtags|length|pluralize:"ов" }}
+                    </span>
+                {% endif %}
+                {% if video.tags %}
+                    <span style="background: #f0e7ff; color: #6600cc; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                        🏷️ {{ video.tags|length }} тег{{ video.tags|length|pluralize:"ов" }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .analyses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .analysis-card {
+        padding: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .analysis-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+</style>
+{% endblock %}
